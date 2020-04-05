@@ -1,0 +1,39 @@
+-- #                    GNU GENERAL PUBLIC LICENSE
+-- #                       Version 3, 29 June 2007
+-- #
+-- # Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+-- # Everyone is permitted to copy and distribute verbatim copies
+-- # of this license document, but changing it is not allowed.
+
+parsed <- parseCSVFromFile "RandomWalk.csv"
+noEmpty = either (const []) (filter (\x -> 2 <= length x))
+base = noEmpty parsed
+length base
+rnds = map readRndWlk base
+plotPNG path = plot (PNG path)
+RndWlkDt seed fltLst = rnds !! 0
+pairedRnd (RndWlkDt _ fltLst) = zip [0..] fltLst
+rndsPair = foldr (\x y -> y ++ [(fst (last y) + 1, pairedRnd x)]) [(1, pairedRnd $ rnds !! 0)] (tail rnds)
+baseName = "Plot"
+baseExt = ".png"
+replaceBase num = baseName ++ (show num) ++ baseExt
+plotWithNum num paired = plotPNG (replaceBase num) $ Data2D [Style Lines] [] paired
+fmap (\(x, y) -> plotWithNum x y) rndsPair
+
+
+import Data.List.Split
+import qualified Streamly.Prelude as S
+import qualified Streamly.Data.Fold as FL
+import qualified Streamly.Memory.Array as A
+import qualified Streamly.FileSystem.Handle as FH
+import qualified System.IO as IOFH
+
+import Data.Char (ord)
+import System.Environment (getArgs)
+import System.IO (openFile, IOMode(..), stdout)
+
+withArg f = do (name : _) <- getArgs; src <- openFile name ReadMode; f src
+
+withFile f = do src <- openFile "RandomWalk.csv" ReadMode; f src
+cat = S.fold (FH.writeChunks stdout) . S.unfold FH.readChunks
+wcl = S.length . S.splitOn (== 10) FL.drain . S.unfold FH.read

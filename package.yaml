@@ -1,0 +1,61 @@
+ #                    GNU GENERAL PUBLIC LICENSE
+ #                       Version 3, 29 June 2007
+ #
+ # Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ # Everyone is permitted to copy and distribute verbatim copies
+ # of this license document, but changing it is not allowed.
+
+name:                RandomWalk
+version:             0.1.0.0
+github:              "rhvall/RndmWlkHskll"
+license:             "GPL-3"
+author:              "rhvall"
+maintainer:          "rhvall"
+copyright:           "2020 rhvall"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/rhvall/RndmWlkHskll#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- csv >= 0.1.2 && < 0.2
+- mtl >= 2.2.2 && < 2.3
+- bytestring > 0.10 && < 0.11
+- streamly > 0.7 && < 0.8
+- split > 0.2 && < 0.3
+- process > 1.6 && < 1.7
+
+library:
+  source-dirs: src
+
+executables:
+  RandomWalk-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - RandomWalk
+
+tests:
+  RandomWalk-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - RandomWalk
